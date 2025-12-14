@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>No-Mind | Consciousness Field</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,13 +10,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
     <style>
-        /* ==================== 00. 基础环境设置 ==================== */
+        /* ==================== 00. 基础环境 ==================== */
         :root {
-            --bg-color: #000;          /* 背景死黑 */
-            --text-primary: #e0e0e0;   /* 文字银灰 */
-            --text-dim: #666;          /* 暗淡文字 */
-            --accent-cyan: #0ff;       /* 青色高光 */
-            --accent-glitch: #ff003c;  /* 故障红色 */
+            --bg-color: #000;
+            --text-primary: #e0e0e0;
+            --text-dim: #666;
+            --accent-cyan: #0ff;
+            --accent-glitch: #ff003c;
             --font-stack: 'Space Mono', 'Noto Serif SC', monospace, serif;
         }
 
@@ -25,29 +25,29 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden; /* 禁止滚动 */
             background-color: var(--bg-color);
             font-family: var(--font-stack);
+            /* 默认桌面端禁止滚动，保持沉浸 */
+            overflow: hidden; 
         }
 
-        /* 自定义鼠标光标：青色十字准星 */
         .custom-cursor {
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="%230ff" stroke-width="2" opacity="0.7"><circle cx="16" cy="16" r="10"/></svg>') 16 16, crosshair;
         }
 
-        /* ==================== 01. 粒子画布 (底层) ==================== */
+        /* ==================== 01. 粒子画布 ==================== */
         canvas {
             display: block;
-            position: absolute;
+            position: fixed; /* 改为 fixed 确保滚动时背景不动 */
             top: 0;
             left: 0;
-            z-index: 1; /* 层级 1：在背景之上 */
+            z-index: 1; 
         }
 
-        /* ==================== 02. 交互界面 (顶层) ==================== */
+        /* ==================== 02. 交互界面 ==================== */
         .void-wrapper {
             position: absolute;
-            z-index: 10; /* 层级 10：在粒子之上 */
+            z-index: 10;
             top: 0;
             left: 0;
             width: 100%;
@@ -55,26 +55,25 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            pointer-events: none; /* 让鼠标能穿透空白区域划动粒子 */
+            pointer-events: none;
         }
 
         .void-container {
             width: 90%;
             max-width: 900px;
-            pointer-events: auto; /* 恢复文字区域的鼠标响应 */
-            background: transparent; /* 透明背景 */
-            border: none;            /* 无边框 */
+            pointer-events: auto;
+            background: transparent;
+            border: none;
             padding: 2rem;
-            /* 强力文字阴影，防止被粒子淹没 */
             text-shadow: 0 0 15px rgba(0,0,0,1), 0 0 5px rgba(0,0,0,0.8);
         }
 
-        /* --- 顶部协议栏 (Header) --- */
+        /* --- 协议头 (Logo & Switch) --- */
         .protocol-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15); /* 底部细线 */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
             padding-bottom: 1rem;
             margin-bottom: 3rem;
             font-size: 0.75rem;
@@ -83,7 +82,6 @@
             user-select: none;
         }
 
-        /* 左侧 Logo */
         .brand-mark {
             font-weight: 700;
             color: #fff;
@@ -102,33 +100,31 @@
             opacity: 0.8;
         }
 
-        /* 中间系统信息 (移动端隐藏) */
         .system-msg {
             color: var(--text-dim);
             opacity: 0.6;
         }
 
-        /* 右侧语言开关 */
         .lang-switch {
             cursor: pointer;
             transition: all 0.3s;
             border: 1px solid rgba(255,255,255,0.1);
-            padding: 4px 12px;
+            padding: 6px 12px; /* 稍微加大点击区域适配手指 */
             background: rgba(0,0,0,0.5);
             color: #888;
         }
-        .lang-switch:hover {
+        .lang-switch:hover, .lang-switch:active {
             color: var(--accent-cyan);
             border-color: var(--accent-cyan);
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); /* 青色光晕 */
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
         }
 
-        /* --- 主标题区域 (Hero) --- */
+        /* --- 核心文案 --- */
         .hero-section { margin-bottom: 4rem; }
 
         h1 {
             color: #fff;
-            font-size: clamp(2rem, 5vw, 4rem); /* 响应式字体大小 */
+            font-size: clamp(2rem, 5vw, 4rem);
             font-weight: 700;
             letter-spacing: -2px;
             line-height: 1.1;
@@ -136,7 +132,6 @@
             text-transform: uppercase;
         }
 
-        /* 故障文字特效 */
         .glitch-text:hover {
             text-shadow: 3px 0 var(--accent-glitch), -3px 0 var(--accent-cyan);
             transition: 0.1s;
@@ -147,7 +142,7 @@
             color: #b0b0b0;
             font-size: 1rem;
             max-width: 600px;
-            border-left: 2px solid var(--accent-glitch); /* 左侧红线 */
+            border-left: 2px solid var(--accent-glitch);
             padding-left: 1.5rem;
             line-height: 1.8;
             font-family: 'Noto Serif SC', serif;
@@ -169,7 +164,7 @@
         }
         .code-log p { margin: 0.4rem 0; }
 
-        /* --- 按钮区域 --- */
+        /* --- 按钮 --- */
         .terminal-actions {
             margin-top: 3rem;
             display: flex;
@@ -194,14 +189,13 @@
             text-align: center;
         }
 
-        .cmd-btn:hover {
+        .cmd-btn:hover, .cmd-btn:active {
             border-color: var(--accent-cyan);
             color: var(--accent-cyan);
             background-color: rgba(0, 255, 255, 0.05);
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
         }
 
-        /* 按钮左侧的箭头 > */
         .cmd-btn::before {
             content: '> ';
             opacity: 0;
@@ -212,7 +206,6 @@
         }
         .cmd-btn:hover::before { opacity: 1; }
 
-        /* 按钮下方的微小说明 */
         .btn-note {
             display: block;
             font-size: 0.7rem;
@@ -222,13 +215,46 @@
             opacity: 0.8;
         }
 
-        /* --- 移动端适配 --- */
-        @media (max-width: 600px) {
-            .void-container { padding: 1.5rem; width: 100%; }
-            .terminal-actions { flex-direction: column; gap: 2rem; }
-            h1 { font-size: 2rem; }
-            .cmd-btn { width: 100%; }
-            .system-msg { display: none; } /* 手机上隐藏中间信息 */
+        /* ==================== 03. 移动端核心修复 (关键部分) ==================== */
+        @media (max-width: 768px) {
+            /* 1. 允许滚动：解决内容被裁切的问题 */
+            body, html {
+                overflow-y: auto; 
+                height: auto;
+                min-height: 100%;
+            }
+
+            /* 2. 取消绝对居中：改为流式布局 */
+            .void-wrapper {
+                position: relative; /* 不再是 absolute */
+                height: auto;       /* 高度自适应 */
+                min-height: 100vh;
+                padding-top: 20px;  /* 顶部留白 */
+                padding-bottom: 40px;
+                display: block;     /* 块级显示 */
+            }
+
+            .void-container {
+                width: 100%;
+                padding: 1.5rem;
+                margin: 0 auto;
+            }
+
+            /* 3. 压缩间距：适配小屏幕 */
+            .protocol-header { margin-bottom: 2rem; }
+            .hero-section { margin-bottom: 2.5rem; }
+            
+            /* 4. 字体适配 */
+            h1 { font-size: 2rem; letter-spacing: -1px; }
+            .brand-mark { font-size: 0.9rem; }
+            
+            /* 5. 布局调整 */
+            .system-msg { display: none; } /* 隐藏中间状态信息 */
+            .terminal-actions { flex-direction: column; gap: 1.5rem; }
+            .cmd-btn { width: 100%; box-sizing: border-box; } /* 按钮全宽 */
+            
+            /* 6. 防止 Logo 文字换行 */
+            .brand-mark { white-space: nowrap; }
         }
     </style>
 </head>
@@ -241,7 +267,7 @@
             
             <div class="protocol-header">
                 <div class="brand-mark">
-                    NO-MIND <span class="version-tag">v1.0</span>
+                    NO-MIND <span class="version-tag">v1.6</span>
                 </div>
 
                 <div class="system-msg t-content" 
@@ -337,26 +363,24 @@
     </div>
 
     <script>
-        // --- 模块 A: 语言切换系统 ---
+        // 语言切换
         document.addEventListener('DOMContentLoaded', () => {
             const langToggle = document.getElementById('langToggle');
             const textElements = document.querySelectorAll('.t-content');
             let currentLang = 'en';
 
             if(langToggle) {
-                langToggle.addEventListener('click', () => {
-                    // 切换语言标记
+                // 支持触摸事件 (touchstart) 提高移动端响应速度
+                langToggle.addEventListener('click', toggleLanguage);
+                
+                function toggleLanguage(e) {
+                    e.preventDefault(); // 防止双击缩放等干扰
                     currentLang = currentLang === 'en' ? 'cn' : 'en';
                     
                     textElements.forEach(el => {
-                        // 获取对应语言的数据
                         const content = currentLang === 'cn' ? el.getAttribute('data-cn') : el.getAttribute('data-en');
-                        
                         if (content) {
-                            // 使用 textContent 修复尖括号不显示的问题
                             el.textContent = content;
-                            
-                            // 字体适配：中文用宋体，英文用等宽
                             if(el.classList.contains('subtitle')) {
                                 el.style.fontFamily = currentLang === 'cn' 
                                     ? "'Noto Serif SC', serif" 
@@ -365,31 +389,28 @@
                         }
                     });
 
-                    // 界面闪烁效果
                     const container = document.querySelector('.void-container');
                     container.style.opacity = '0.5';
                     setTimeout(() => container.style.opacity = '1', 100);
-                });
+                }
             }
         });
 
-        // --- 模块 B: 粒子流体系统 ---
+        // 粒子系统
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         
-        // 物理参数配置
-        const PARTICLE_DENSITY_FACTOR = 100; // 密度 (越小越密)
-        const MOUSE_INFLUENCE_RADIUS = 250;  // 鼠标影响范围
-        const MOUSE_DRAG_FORCE = 0.08;       // 流体拖拽力度
-        const FRICTION = 0.94;               // 摩擦力
-        const TIME_SCALE = 0.0005;           // 时间流速
-        const NEBULA_SCALE = 0.003;          // 星云纹理大小
+        const PARTICLE_DENSITY_FACTOR = 100; 
+        const MOUSE_INFLUENCE_RADIUS = 250;
+        const MOUSE_DRAG_FORCE = 0.08;       
+        const FRICTION = 0.94;               
+        const TIME_SCALE = 0.0005; 
+        const NEBULA_SCALE = 0.003;          
 
         let width, height;
         let particles = [];
         let mouse = { x: 0, y: 0, active: false };
 
-        // 初始化
         function init() {
             width = window.innerWidth;
             height = window.innerHeight;
@@ -408,25 +429,22 @@
                     vy: (Math.random() - 0.5) * 0.5,
                     size: Math.random() < 0.8 ? Math.random() * 1.5 + 0.5 : Math.random() * 2 + 1.5,
                     depth: depth, 
-                    hue: 180 + Math.random() * 100, // 青色到蓝色范围
+                    hue: 180 + Math.random() * 100, 
                     baseAlpha: 0.1 + Math.random() * 0.5, 
                     angle: Math.random() * Math.PI * 2 
                 });
             }
         }
 
-        // 物理更新
         function update() {
             const time = Date.now() * TIME_SCALE;
             
             particles.forEach(p => {
-                // 1. 自然流动 (呼吸感)
                 const speedFactor = 0.2 + (p.depth * 0.5); 
                 p.x += Math.sin(p.angle + time) * speedFactor;
                 p.y += Math.cos(p.angle + time) * speedFactor;
                 p.angle += 0.002;
 
-                // 2. 鼠标交互 (漩涡流体)
                 if (mouse.active) {
                     const dx = mouse.x - p.x;
                     const dy = mouse.y - p.y;
@@ -444,13 +462,11 @@
                     }
                 }
 
-                // 3. 应用摩擦力
                 p.vx *= FRICTION; 
                 p.vy *= FRICTION;
                 p.x += p.vx;
                 p.y += p.vy;
 
-                // 4. 边界循环
                 const margin = 100;
                 if (p.x < -margin) p.x = width + margin;
                 if (p.x > width + margin) p.x = -margin;
@@ -459,19 +475,15 @@
             });
         }
 
-        // 绘图循环
         function draw() {
-            // 拖尾背景
             ctx.globalCompositeOperation = 'source-over';
             ctx.fillStyle = 'rgba(0, 0, 0, 0.15)'; 
             ctx.fillRect(0, 0, width, height);
 
-            // 发光叠加模式
             ctx.globalCompositeOperation = 'lighter';
             const time = Date.now() * TIME_SCALE;
 
             particles.forEach(p => {
-                // 计算闪烁
                 const noise = Math.sin(p.x * NEBULA_SCALE + time) * Math.cos(p.y * NEBULA_SCALE + time * 0.7);
                 let spatialAlpha = (noise + 1) / 2; 
                 spatialAlpha = Math.pow(spatialAlpha, 3);
@@ -491,16 +503,23 @@
             update();
         }
 
-        // 监听事件
+        // 触摸事件兼容 (手机滑动粒子)
         window.addEventListener('resize', init);
         window.addEventListener('mousemove', (e) => {
             mouse.x = e.clientX;
             mouse.y = e.clientY;
             mouse.active = true;
         });
+        // 增加触摸支持
+        window.addEventListener('touchmove', (e) => {
+            mouse.x = e.touches[0].clientX;
+            mouse.y = e.touches[0].clientY;
+            mouse.active = true;
+        }, {passive: true});
+        
         window.addEventListener('mouseout', () => { mouse.active = false; });
+        window.addEventListener('touchend', () => { mouse.active = false; });
 
-        // 启动
         init();
         draw();
     </script>
