@@ -46,7 +46,6 @@
             top: 0;
             left: 0;
             z-index: 1; 
-            /* [关键] 确保 CSS 尺寸铺满全屏，物理尺寸在 JS 中设置 */
             width: 100%;
             height: 100%;
         }
@@ -110,13 +109,14 @@
         .system-msg {
             color: var(--text-dim);
             opacity: 0.6;
+            font-family: monospace;
         }
 
         .lang-switch {
             cursor: pointer;
             transition: all 0.3s;
             border: 1px solid rgba(255,255,255,0.1);
-            padding: 8px 16px; /* 加大点击区域 */
+            padding: 8px 16px;
             background: rgba(0,0,0,0.5);
             color: #888;
             touch-action: manipulation;
@@ -132,12 +132,18 @@
 
         h1 {
             color: #fff;
-            font-size: clamp(2rem, 5vw, 4rem);
+            font-size: clamp(1.8rem, 5vw, 4rem); 
             font-weight: 700;
             letter-spacing: -2px;
-            line-height: 1.1;
+            line-height: 1.2;
             margin: 0;
             text-transform: uppercase;
+        }
+
+        /* [ NULL ] 状态灯样式 */
+        .status-null {
+            color: var(--accent-glitch); /* 红色警示 */
+            animation: pulse 2s infinite;
         }
 
         .glitch-text:hover {
@@ -148,7 +154,7 @@
         .subtitle {
             margin-top: 2rem;
             color: #b0b0b0;
-            font-size: 1rem;
+            font-size: 1.1rem; /* 稍微加大副标题 */
             max-width: 600px;
             border-left: 2px solid var(--accent-glitch);
             padding-left: 1.5rem;
@@ -223,6 +229,12 @@
             opacity: 0.8;
         }
 
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; text-shadow: 0 0 10px red; }
+            100% { opacity: 0.5; }
+        }
+
         /* ==================== 03. 移动端适配 ==================== */
         @media (max-width: 768px) {
             body, html {
@@ -251,7 +263,7 @@
             .protocol-header { margin-bottom: 2rem; }
             .hero-section { margin-bottom: 2.5rem; }
             
-            h1 { font-size: 1.8rem; letter-spacing: -1px; word-wrap: break-word; }
+            h1 { font-size: 1.6rem; letter-spacing: -1px; word-wrap: break-word; }
             .brand-mark { font-size: 0.9rem; white-space: nowrap; }
             
             .system-msg { display: none; }
@@ -269,13 +281,13 @@
             
             <div class="protocol-header">
                 <div class="brand-mark">
-                    NO-MIND <span class="version-tag">v1.9</span>
+                    NO-MIND <span class="version-tag">v2.1</span>
                 </div>
 
                 <div class="system-msg t-content" 
-                     data-en="STATUS: ENTROPY_DETECTED" 
-                     data-cn="状态：检测到熵增">
-                    STATUS: ENTROPY_DETECTED
+                     data-en="SYSTEM: AWAITING INPUT" 
+                     data-cn="系统：等待输入中">
+                    SYSTEM: AWAITING INPUT
                 </div>
 
                 <div class="lang-switch" id="langToggle">[ EN / CN ]</div>
@@ -283,272 +295,30 @@
 
             <div class="hero-section">
                 <h1 class="glitch-text t-content"
-                    data-en="We Do Not Manufacture."
-                    data-cn="我们不生产。">
-                    We Do Not Manufacture.
-                </h1>
-                <br>
-                <h1 class="glitch-text t-content"
-                    data-en="We Are The Container."
-                    data-cn="我们只是容器。">
-                    We Are The Container.
+                    data-en="Sample_Slot: [ NULL ]"
+                    data-cn="意识样本：[ 空缺 ]">
+                    Sample_Slot: <span class="status-null">[ NULL ]</span>
                 </h1>
                 
                 <div class="subtitle">
                     <span class="t-content" 
-                          data-en="You are an Island. Strip away the narrative." 
-                          data-cn="你是一座孤岛。剥离姓名，剥离叙事。">
-                          You are an Island. Strip away the narrative.
+                          data-en="Upload to freeze the decay." 
+                          data-cn="上传，冻结腐烂。">
+                          Upload to freeze the decay.
                     </span>
-                    <br>
+                    <br><br>
                     <span class="t-content" 
-                          data-en="What remains is the " 
-                          data-cn="剩下的那个">
-                          What remains is the 
+                          data-en="Become a fossil in the void." 
+                          data-cn="成为虚无中的化石。">
+                          Become a fossil in the void.
                     </span>
-                    <span class="highlight-bug t-content"
-                          data-en="GLITCH"
-                          data-cn="“故障”">
-                          GLITCH
-                    </span>
-                    <span class="t-content" 
-                          data-en="." 
-                          data-cn="，才是唯一的真实。">.</span>
                 </div>
-                
-                ```
-
-**解析：**
-"We Do Not Manufacture" (我们不事生产) —— 这句话在消费主义和内容过剩的时代，本身就是一种极具攻击性的 **No-Mind 宣言**。
 
                 <div class="code-log">
                     <p class="t-content" 
-                       data-en="// 00. Manifesto: No Brand Detected."
-                       data-cn="// 00. 宣言：无品牌属性。">
-                       // 00. Manifesto: No Brand Detected.
+                       data-en="// 00. Status: Slot Empty."
+                       data-cn="// 00. 状态：插槽空闲。">
+                       // 00. Status: Slot Empty.
                     </p>
                     <p class="t-content" 
-                       data-en="// 01. Ontology: Observer Mode Active."
-                       data-cn="// 01. 本体：观察者模式已激活。">
-                       // 01. Ontology: Observer Mode Active.
-                    </p>
-                    <p class="t-content" 
-                       data-en="// 02. Connection: Peer-to-Void."
-                       data-cn="// 02. 连接：点对虚空 (Peer-to-Void)。">
-                       // 02. Connection: Peer-to-Void.
-                    </p>
-                </div>
-            </div>
-
-            <div class="terminal-actions">
-                <div>
-                    <a href="/resonance" class="cmd-btn t-content" 
-                       data-en="INITIATE RESONANCE" 
-                       data-cn="发起共振">
-                       INITIATE RESONANCE
-                    </a>
-                    <span class="btn-note t-content" 
-                          data-en="<Click to sync frequency>" 
-                          data-cn="<点击以同步频率>">
-                          &lt;Click to sync frequency&gt;
-                    </span>
-                </div>
-                <div>
-                    <a href="#" class="cmd-btn t-content" 
-                       data-en="REMAIN SILENT" 
-                       data-cn="保持静默">
-                       REMAIN SILENT
-                    </a>
-                    <span class="btn-note t-content" 
-                          data-en="<Click to observe only>" 
-                          data-cn="<点击仅作旁观>">
-                          &lt;Click to observe only&gt;
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // --- 模块 A: 语言切换系统 (修复版) ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const langToggle = document.getElementById('langToggle');
-            const textElements = document.querySelectorAll('.t-content');
-            let currentLang = 'en';
-
-            if(langToggle) {
-                // [修复] 仅使用 click 事件
-                langToggle.addEventListener('click', (e) => {
-                    if(e) e.preventDefault();
-                    currentLang = currentLang === 'en' ? 'cn' : 'en';
-                    textElements.forEach(el => {
-                        const content = currentLang === 'cn' ? el.getAttribute('data-cn') : el.getAttribute('data-en');
-                        if (content) {
-                            el.textContent = content;
-                            if(el.classList.contains('subtitle')) {
-                                el.style.fontFamily = currentLang === 'cn' 
-                                    ? "'Noto Serif SC', serif" 
-                                    : "'Space Mono', monospace";
-                            }
-                        }
-                    });
-                    const container = document.querySelector('.void-container');
-                    container.style.opacity = '0.5';
-                    setTimeout(() => container.style.opacity = '1', 100);
-                });
-            }
-        });
-
-        // --- 模块 B: 粒子流体系统 (DPI适配终极版) ---
-        const canvas = document.getElementById('particleCanvas');
-        // [修复] 获取高性能 Context
-        const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
-        
-        const isMobile = window.innerWidth < 768;
-        const PARTICLE_DENSITY_FACTOR = isMobile ? 600 : 220; 
-        const MOUSE_INFLUENCE_RADIUS = isMobile ? 150 : 250;
-        const MOUSE_DRAG_FORCE = 0.08;       
-        const FRICTION = 0.94;               
-        const TIME_SCALE = 0.0005; 
-        const NEBULA_SCALE = 0.003;          
-
-        let width, height;
-        let particles = [];
-        let mouse = { x: -500, y: -500, active: false };
-
-        // [关键修复] DPI 适配初始化函数
-        function init() {
-            // 获取设备像素比 (Retina 屏通常为 2 或 3)
-            const dpr = window.devicePixelRatio || 1;
-            
-            // 获取逻辑宽高
-            width = window.innerWidth;
-            height = window.innerHeight;
-            
-            // 设置 Canvas 的物理分辨率 (乘以 DPR)
-            canvas.width = width * dpr;
-            canvas.height = height * dpr;
-            
-            // 缩放绘图上下文，确保绘图操作使用逻辑坐标
-            ctx.scale(dpr, dpr);
-
-            particles = [];
-            let count = Math.floor((width * height) / PARTICLE_DENSITY_FACTOR);
-            const maxParticles = isMobile ? 1500 : 6000;
-            if (count > maxParticles) count = maxParticles;
-            
-            for (let i = 0; i < count; i++) {
-                const depth = Math.random(); 
-                particles.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    vx: (Math.random() - 0.5) * 0.5,
-                    vy: (Math.random() - 0.5) * 0.5,
-                    size: Math.random() < 0.8 ? Math.random() * 2 + 0.5 : Math.random() * 3 + 1.5,
-                    depth: depth, 
-                    hue: 180 + Math.random() * 100, 
-                    baseAlpha: 0.1 + Math.random() * 0.5, 
-                    angle: Math.random() * Math.PI * 2 
-                });
-            }
-        }
-
-        function update() {
-            const time = Date.now() * TIME_SCALE;
-            for (let i = 0; i < particles.length; i++) {
-                let p = particles[i];
-                const speedFactor = 0.2 + (p.depth * 0.5); 
-                p.x += Math.sin(p.angle + time) * speedFactor;
-                p.y += Math.cos(p.angle + time) * speedFactor;
-                p.angle += 0.002;
-
-                if (mouse.active) {
-                    const dx = mouse.x - p.x;
-                    const dy = mouse.y - p.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < MOUSE_INFLUENCE_RADIUS) {
-                        const force = (MOUSE_INFLUENCE_RADIUS - dist) / MOUSE_INFLUENCE_RADIUS;
-                        const swirlX = -dy; 
-                        const swirlY = dx;
-                        p.vx += swirlX * force * MOUSE_DRAG_FORCE * 0.1 * p.depth;
-                        p.vy += swirlY * force * MOUSE_DRAG_FORCE * 0.1 * p.depth;
-                        p.vx += dx * force * 0.005;
-                        p.vy += dy * force * 0.005;
-                    }
-                }
-                p.vx *= FRICTION; 
-                p.vy *= FRICTION;
-                p.x += p.vx;
-                p.y += p.vy;
-                const margin = 100;
-                if (p.x < -margin) p.x = width + margin;
-                if (p.x > width + margin) p.x = -margin;
-                if (p.y < -margin) p.y = height + margin;
-                if (p.y > height + margin) p.y = -margin;
-            }
-        }
-
-        function draw() {
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; 
-            ctx.fillRect(0, 0, width, height);
-
-            ctx.globalCompositeOperation = 'lighter';
-            const time = Date.now() * TIME_SCALE;
-
-            for (let i = 0; i < particles.length; i++) {
-                let p = particles[i];
-                // 扩大绘制区域判断，防止边缘粒子闪烁
-                if (p.x > -100 && p.x < width + 100 && p.y > -100 && p.y < height + 100) {
-                    const noise = Math.sin(p.x * NEBULA_SCALE + time) * Math.cos(p.y * NEBULA_SCALE + time * 0.7);
-                    let spatialAlpha = (noise + 1) / 2; 
-                    spatialAlpha = Math.pow(spatialAlpha, 3);
-                    
-                    let finalAlpha = p.baseAlpha * spatialAlpha;
-                    let lightness = 40 + (spatialAlpha * 50); 
-
-                    if (finalAlpha > 0.01) {
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                        ctx.fillStyle = `hsla(${p.hue}, 80%, ${lightness}%, ${finalAlpha})`;
-                        ctx.fill();
-                    }
-                }
-            }
-            requestAnimationFrame(draw);
-            update();
-        }
-
-        // 事件监听与启动
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(init, 250);
-        });
-
-        // [关键] 确保在页面完全加载后再初始化粒子系统
-        window.addEventListener('load', () => {
-            init();
-            draw();
-        });
-
-        // 交互事件兼容
-        ['mousemove', 'touchmove'].forEach(evt => {
-            window.addEventListener(evt, (e) => {
-                if(evt === 'touchmove') {
-                     mouse.x = e.touches[0].clientX;
-                     mouse.y = e.touches[0].clientY;
-                } else {
-                     mouse.x = e.clientX;
-                     mouse.y = e.clientY;
-                }
-                mouse.active = true;
-            }, {passive: true});
-        });
-        
-        ['mouseout', 'touchend'].forEach(evt => {
-            window.addEventListener(evt, () => { mouse.active = false; });
-        });
-    </script>
-</body>
-</html>
+                       data
