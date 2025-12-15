@@ -140,9 +140,8 @@
             text-transform: uppercase;
         }
 
-        /* [ NULL ] 状态灯样式 */
         .status-null {
-            color: var(--accent-glitch); /* 红色警示 */
+            color: var(--accent-glitch);
             animation: pulse 2s infinite;
         }
 
@@ -154,7 +153,7 @@
         .subtitle {
             margin-top: 2rem;
             color: #b0b0b0;
-            font-size: 1.1rem; /* 稍微加大副标题 */
+            font-size: 1.1rem;
             max-width: 600px;
             border-left: 2px solid var(--accent-glitch);
             padding-left: 1.5rem;
@@ -281,7 +280,7 @@
             
             <div class="protocol-header">
                 <div class="brand-mark">
-                    NO-MIND <span class="version-tag">v2.1</span>
+                    NO-MIND <span class="version-tag">v2.2</span>
                 </div>
 
                 <div class="system-msg t-content" 
@@ -308,9 +307,9 @@
                     </span>
                     <br><br>
                     <span class="t-content" 
-                          data-en="Become a fossil in the void." 
-                          data-cn="成为虚无中的化石。">
-                          Become a fossil in the void.
+                          data-en="Or remain a fleeting signal." 
+                          data-cn="或者，继续做一个稍纵即逝的信号。">
+                          Or remain a fleeting signal.
                     </span>
                 </div>
 
@@ -321,4 +320,226 @@
                        // 00. Status: Slot Empty.
                     </p>
                     <p class="t-content" 
-                       data
+                       data-en="// 01. Warning: Entropy Rising..."
+                       data-cn="// 01. 警告：熵值上升中...">
+                       // 01. Warning: Entropy Rising...
+                    </p>
+                    <p class="t-content" 
+                       data-en="// 02. Protocol: Anti-Forget."
+                       data-cn="// 02. 协议：对抗遗忘。">
+                       // 02. Protocol: Anti-Forget.
+                    </p>
+                </div>
+            </div>
+
+            <div class="terminal-actions">
+                <div>
+                    <a href="#" class="cmd-btn t-content" 
+                       data-en="UPLOAD TO FREEZE" 
+                       data-cn="上传冻结">
+                       UPLOAD TO FREEZE
+                    </a>
+                    <span class="btn-note t-content" 
+                          data-en="<Stop the Decay>" 
+                          data-cn="<终止腐烂>">
+                          &lt;Stop the Decay&gt;
+                    </span>
+                </div>
+                <div>
+                    <a href="#" class="cmd-btn t-content" 
+                       data-en="OBSERVE VOID" 
+                       data-cn="保持旁观">
+                       OBSERVE VOID
+                    </a>
+                    <span class="btn-note t-content" 
+                          data-en="<Remain Passive>" 
+                          data-cn="<保持被动>">
+                          &lt;Remain Passive&gt;
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 模块 A: 语言切换系统 (修复版) ---
+        (function() {
+            const langToggle = document.getElementById('langToggle');
+            const textElements = document.querySelectorAll('.t-content');
+            let currentLang = 'en';
+
+            if(langToggle) {
+                // 使用 onclick 确保兼容性，不依赖 DOMContentLoaded
+                langToggle.onclick = function(e) {
+                    if(e) e.preventDefault();
+                    
+                    currentLang = currentLang === 'en' ? 'cn' : 'en';
+                    
+                    textElements.forEach(el => {
+                        const content = currentLang === 'cn' ? el.getAttribute('data-cn') : el.getAttribute('data-en');
+                        if (content) {
+                            el.innerHTML = content;
+                            if(el.classList.contains('subtitle')) {
+                                el.style.fontFamily = currentLang === 'cn' 
+                                    ? "'Noto Serif SC', serif" 
+                                    : "'Space Mono', monospace";
+                            }
+                        }
+                    });
+
+                    // 闪烁反馈
+                    const container = document.querySelector('.void-container');
+                    if(container) {
+                        container.style.opacity = '0.5';
+                        setTimeout(() => container.style.opacity = '1', 100);
+                    }
+                };
+            }
+        })();
+
+        // --- 模块 B: 粒子流体系统 (DPI 坐标修复版) ---
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
+        
+        const isMobile = window.innerWidth < 768;
+        const PARTICLE_DENSITY_FACTOR = isMobile ? 600 : 220; 
+        const MOUSE_INFLUENCE_RADIUS = isMobile ? 150 : 250;
+        const MOUSE_DRAG_FORCE = 0.08;       
+        const FRICTION = 0.94;               
+        const TIME_SCALE = 0.0005; 
+        const NEBULA_SCALE = 0.003;          
+
+        let width, height;
+        let particles = [];
+        let mouse = { x: -500, y: -500, active: false };
+
+        function init() {
+            // [关键修复] 重置变换矩阵，防止 resize 时缩放比例无限叠加
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+            const dpr = window.devicePixelRatio || 1;
+            width = window.innerWidth;
+            height = window.innerHeight;
+            
+            // 设置物理像素
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            
+            // 缩放逻辑像素
+            ctx.scale(dpr, dpr);
+
+            particles = [];
+            let count = Math.floor((width * height) / PARTICLE_DENSITY_FACTOR);
+            const maxParticles = isMobile ? 1500 : 6000;
+            if (count > maxParticles) count = maxParticles;
+            
+            for (let i = 0; i < count; i++) {
+                const depth = Math.random(); 
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    size: Math.random() < 0.8 ? Math.random() * 2 + 0.5 : Math.random() * 3 + 1.5,
+                    depth: depth, 
+                    hue: 180 + Math.random() * 100, 
+                    baseAlpha: 0.1 + Math.random() * 0.5, 
+                    angle: Math.random() * Math.PI * 2 
+                });
+            }
+        }
+
+        function update() {
+            const time = Date.now() * TIME_SCALE;
+            for (let i = 0; i < particles.length; i++) {
+                let p = particles[i];
+                const speedFactor = 0.2 + (p.depth * 0.5); 
+                p.x += Math.sin(p.angle + time) * speedFactor;
+                p.y += Math.cos(p.angle + time) * speedFactor;
+                p.angle += 0.002;
+
+                if (mouse.active) {
+                    const dx = mouse.x - p.x;
+                    const dy = mouse.y - p.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < MOUSE_INFLUENCE_RADIUS) {
+                        const force = (MOUSE_INFLUENCE_RADIUS - dist) / MOUSE_INFLUENCE_RADIUS;
+                        const swirlX = -dy; 
+                        const swirlY = dx;
+                        p.vx += swirlX * force * MOUSE_DRAG_FORCE * 0.1 * p.depth;
+                        p.vy += swirlY * force * MOUSE_DRAG_FORCE * 0.1 * p.depth;
+                        p.vx += dx * force * 0.005;
+                        p.vy += dy * force * 0.005;
+                    }
+                }
+                p.vx *= FRICTION; 
+                p.vy *= FRICTION;
+                p.x += p.vx;
+                p.y += p.vy;
+                const margin = 100;
+                if (p.x < -margin) p.x = width + margin;
+                if (p.x > width + margin) p.x = -margin;
+                if (p.y < -margin) p.y = height + margin;
+                if (p.y > height + margin) p.y = -margin;
+            }
+        }
+
+        function draw() {
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; 
+            // 注意：这里用 width 和 height 清除矩形，因为 context 已经 scale 过了
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.globalCompositeOperation = 'lighter';
+            const time = Date.now() * TIME_SCALE;
+
+            for (let i = 0; i < particles.length; i++) {
+                let p = particles[i];
+                if (p.x > -100 && p.x < width + 100 && p.y > -100 && p.y < height + 100) {
+                    const noise = Math.sin(p.x * NEBULA_SCALE + time) * Math.cos(p.y * NEBULA_SCALE + time * 0.7);
+                    let spatialAlpha = (noise + 1) / 2; 
+                    spatialAlpha = Math.pow(spatialAlpha, 3);
+                    let finalAlpha = p.baseAlpha * spatialAlpha;
+                    let lightness = 40 + (spatialAlpha * 50); 
+                    if (finalAlpha > 0.01) {
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fillStyle = `hsla(${p.hue}, 80%, ${lightness}%, ${finalAlpha})`;
+                        ctx.fill();
+                    }
+                }
+            }
+            requestAnimationFrame(draw);
+            update();
+        }
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(init, 250);
+        });
+
+        // 立即初始化
+        init();
+        draw();
+
+        // 交互监听
+        ['mousemove', 'touchmove'].forEach(evt => {
+            window.addEventListener(evt, (e) => {
+                if(evt === 'touchmove') {
+                     mouse.x = e.touches[0].clientX;
+                     mouse.y = e.touches[0].clientY;
+                } else {
+                     mouse.x = e.clientX;
+                     mouse.y = e.clientY;
+                }
+                mouse.active = true;
+            }, {passive: true});
+        });
+        
+        ['mouseout', 'touchend'].forEach(evt => {
+            window.addEventListener(evt, () => { mouse.active = false; });
+        });
+    </script>
+</body>
+</html>
