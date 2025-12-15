@@ -362,14 +362,13 @@
     </div>
 
     <script>
-        // --- 模块 A: 语言切换系统 (修复版) ---
+        // --- 模块 A: 语言切换系统 (智能修复版) ---
         (function() {
             const langToggle = document.getElementById('langToggle');
             const textElements = document.querySelectorAll('.t-content');
             let currentLang = 'en';
 
             if(langToggle) {
-                // 使用 onclick 确保兼容性，不依赖 DOMContentLoaded
                 langToggle.onclick = function(e) {
                     if(e) e.preventDefault();
                     
@@ -377,8 +376,21 @@
                     
                     textElements.forEach(el => {
                         const content = currentLang === 'cn' ? el.getAttribute('data-cn') : el.getAttribute('data-en');
+                        
                         if (content) {
-                            el.innerHTML = content;
+                            // [关键修复逻辑]
+                            // 1. 如果是按钮下方的说明文字 (btn-note)，强制用 textContent (纯文本模式)，
+                            //    这样 <Stop> 就不会被误判为 HTML 标签而被隐藏。
+                            if (el.classList.contains('btn-note')) {
+                                el.textContent = content;
+                            } 
+                            // 2. 其他元素（如主标题的红色闪烁文字）依然用 innerHTML，
+                            //    以保持 HTML 样式生效。
+                            else {
+                                el.innerHTML = content;
+                            }
+
+                            // 字体适配逻辑
                             if(el.classList.contains('subtitle')) {
                                 el.style.fontFamily = currentLang === 'cn' 
                                     ? "'Noto Serif SC', serif" 
@@ -397,7 +409,7 @@
             }
         })();
 
-        // --- 模块 B: 粒子流体系统 (DPI 坐标修复版) ---
+        // --- 模块 B: 粒子流体系统 (保持 V2.3 不变) ---
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d', { alpha: false });
         
@@ -414,18 +426,15 @@
         let mouse = { x: -500, y: -500, active: false };
 
         function init() {
-            // [关键修复] 重置变换矩阵，防止 resize 时缩放比例无限叠加
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.setTransform(1, 0, 0, 1, 0, 0); // 重置坐标系
 
             const dpr = window.devicePixelRatio || 1;
             width = window.innerWidth;
             height = window.innerHeight;
             
-            // 设置物理像素
             canvas.width = width * dpr;
             canvas.height = height * dpr;
             
-            // 缩放逻辑像素
             ctx.scale(dpr, dpr);
 
             particles = [];
@@ -487,7 +496,6 @@
         function draw() {
             ctx.globalCompositeOperation = 'source-over';
             ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; 
-            // 注意：这里用 width 和 height 清除矩形，因为 context 已经 scale 过了
             ctx.fillRect(0, 0, width, height);
 
             ctx.globalCompositeOperation = 'lighter';
@@ -519,11 +527,9 @@
             resizeTimer = setTimeout(init, 250);
         });
 
-        // 立即初始化
         init();
         draw();
 
-        // 交互监听
         ['mousemove', 'touchmove'].forEach(evt => {
             window.addEventListener(evt, (e) => {
                 if(evt === 'touchmove') {
@@ -541,5 +547,3 @@
             window.addEventListener(evt, () => { mouse.active = false; });
         });
     </script>
-</body>
-</html>
