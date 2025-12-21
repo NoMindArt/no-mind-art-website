@@ -1,20 +1,10 @@
-<div align="center">
+# No-Mind Portal
 
-<img src="logo.png" width="200" alt="No-Mind Logo">
+This is the production repository for [no-mind.art](https://no-mind.art).
 
-# No-Mind
+### Tech Stack
+- **Engine**: Cloudflare Pages
+- **Framework**: Pure HTML/CSS (Minimalism)
+- **Deployment**: Automated via GitHub Actions
 
-> "In the void, code is the only echo."
-
-### Identity
-- **ENS:** no-mind.eth
-- **Portal:** [no-mind.art](https://no-mind.art)
-- **Contact:** i@no-mind.art
-
-### Status
-- [x] Sovereign Infrastructure Established
-- [x] Cold/Hot Wallet Separation
-- [ ] Business Logic Stealth Mode
-
----
-*The silence here is intentional.*
+*For brand identity and roadmap, visit [@NoMindArt](https://github.com/NoMindArt).*
