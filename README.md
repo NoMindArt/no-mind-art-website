@@ -1,7 +1,8 @@
 <div align="center">
 
 <img src="logo.png" width="200" alt="No-Mind Logo">
-# 🕳️ No-Mind
+
+# No-Mind
 
 > "In the void, code is the only echo."
 
