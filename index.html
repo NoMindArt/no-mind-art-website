@@ -8,19 +8,22 @@
   <style>
     :root{
       --bg:#000;
-      --text:rgba(255,255,255,.82);
+      --text:rgba(255,255,255,.86);
       --muted:rgba(255,255,255,.46);
-      --faint:rgba(255,255,255,.28);
-      --stroke:rgba(255,255,255,.12);
-      --stroke2:rgba(255,255,255,.18);
-      --panel:rgba(0,0,0,.18);
-      --panel2:rgba(0,0,0,.35);
-      --chip:rgba(255,255,255,.04);
-      --chipH:rgba(255,255,255,.07);
+      --faint:rgba(255,255,255,.26);
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.16);
+      --glass1:rgba(0,0,0,.10);
+      --glass2:rgba(0,0,0,.34);
+      --chip:rgba(255,255,255,.035);
+      --chipH:rgba(255,255,255,.06);
       --chipA:rgba(255,255,255,.10);
+
       --font:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Noto Sans CJK SC",sans-serif;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --serif: "Noto Serif SC","Songti SC",serif;
     }
+
     *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
     html,body{margin:0;padding:0;width:100%;height:100%;background:var(--bg);font-family:var(--font);overflow:hidden;}
     canvas{display:block;position:fixed;top:0;left:0;z-index:1;width:100%;height:100%;}
@@ -33,65 +36,100 @@
       pointer-events:none;
     }
     .frame{
-      width:min(920px,92vw);
+      width:min(980px,92vw);
       pointer-events:auto;
-      padding:26px 22px;
-      border-radius:28px;
-      border:1px solid rgba(255,255,255,.0);
-      background:transparent;
+      padding:24px 22px;
       text-shadow: 0 0 14px rgba(0,0,0,1), 0 0 5px rgba(0,0,0,.85);
     }
+
+    /* top bar */
     .topbar{
       display:flex; align-items:center; justify-content:space-between;
-      padding-bottom:14px;
-      border-bottom:1px solid rgba(255,255,255,.10);
+      padding:10px 6px 16px;
+      border-bottom:1px solid rgba(255,255,255,.09);
       user-select:none;
     }
     .brand{
       display:flex; align-items:center; gap:10px;
-      letter-spacing:.22em;
-      color:rgba(255,255,255,.70);
+      letter-spacing:.24em;
+      color:rgba(255,255,255,.72);
       font-size:12px;
     }
-    .brand img{width:30px;height:30px;opacity:.85;filter:drop-shadow(0 18px 28px rgba(0,0,0,.6));}
-    .enter{
+    .brand img{width:30px;height:30px;opacity:.86;filter:drop-shadow(0 18px 28px rgba(0,0,0,.6));}
+    .topRight{
+      display:flex; align-items:center; gap:10px;
+    }
+    .ghost{
       border:1px solid var(--stroke);
       background:rgba(255,255,255,.03);
-      color:rgba(255,255,255,.62);
+      color:rgba(255,255,255,.60);
       border-radius:18px;
-      padding:8px 14px;
+      padding:8px 12px;
       font-size:12px;
       letter-spacing:.10em;
+      font-family:var(--mono);
+      cursor:pointer;
     }
-    .enter:hover{border-color:var(--stroke2); background:rgba(255,255,255,.05); color:rgba(255,255,255,.78);}
+    .ghost:hover{border-color:var(--stroke2); background:rgba(255,255,255,.05); color:rgba(255,255,255,.78);}
 
-    .panel{
+    /* “薄膜接口”主面板 */
+    .veil{
       margin-top:18px;
-      padding:18px 18px 16px;
-      border-radius:26px;
-      border:1px solid rgba(255,255,255,.08);
-      background:linear-gradient(to bottom, rgba(0,0,0,.10), rgba(0,0,0,.22));
-      backdrop-filter: blur(10px);
+      padding:22px 18px 18px;
+      border-radius:28px;
+      border:1px solid rgba(255,255,255,.07);
+      background:
+        radial-gradient(circle at 20% 25%, rgba(255,255,255,.05), transparent 62%),
+        radial-gradient(circle at 80% 80%, rgba(255,255,255,.04), transparent 65%),
+        linear-gradient(to bottom, var(--glass1), var(--glass2));
+      backdrop-filter: blur(12px);
+      box-shadow: 0 50px 160px rgba(0,0,0,.70);
+      position:relative;
+      overflow:hidden;
     }
+    .veil:before{
+      content:"";
+      position:absolute; inset:-40%;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.05), transparent 60%);
+      opacity:.55;
+      pointer-events:none;
+      transform: rotate(8deg);
+    }
+    .veilInner{position:relative; z-index:1;}
 
-    .promptRow{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    /* header area inside veil */
+    .headRow{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:14px;
+      padding:0 4px 14px;
+      border-bottom:1px solid rgba(255,255,255,.07);
     }
-    .prompt{
-      font-size:12px; color:var(--muted);
+    .headLeft{
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .headTitle{
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.26em;
+      color:rgba(255,255,255,.72);
+      text-transform:uppercase;
+    }
+    .headHint{
+      font-size:12px;
+      color:var(--muted);
       letter-spacing:.06em;
     }
-    .another{
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.02);
-      color:rgba(255,255,255,.52);
-      border-radius:16px;
-      padding:6px 12px;
-      font-size:12px;
+    .headMeta{
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.16em;
+      color:rgba(255,255,255,.34);
+      text-transform:uppercase;
+      text-align:right;
+      white-space:nowrap;
     }
-    .another:hover{border-color:var(--stroke2); background:rgba(255,255,255,.04); color:rgba(255,255,255,.70);}
 
-    .chips{margin-top:12px; display:flex; flex-wrap:wrap; gap:8px;}
+    /* states */
+    .chips{margin-top:14px; display:flex; flex-wrap:wrap; gap:8px; padding:0 4px;}
     .chip{
       border:1px solid rgba(255,255,255,.10);
       background:var(--chip);
@@ -101,82 +139,102 @@
       font-size:12px;
       letter-spacing:.06em;
       cursor:pointer;
+      user-select:none;
     }
     .chip:hover{background:var(--chipH); border-color:var(--stroke2)}
-    .chip.active{background:var(--chipA); color:rgba(255,255,255,.80); border-color:rgba(255,255,255,.18);}
+    .chip.active{background:var(--chipA); color:rgba(255,255,255,.82); border-color:rgba(255,255,255,.18);}
 
+    /* work area */
     .work{
-      margin-top:14px;
-      padding:20px 18px 16px;
+      margin-top:16px;
+      padding:18px 16px 14px;
       border-radius:22px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.26);
+      border:1px solid rgba(255,255,255,.09);
+      background:rgba(0,0,0,.22);
     }
-    .meta{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    .workTop{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:0 2px 10px;
+    }
+    .id{
       font-family:var(--mono);
       font-size:11px;
-      color:rgba(255,255,255,.40);
-      letter-spacing:.22em;
+      letter-spacing:.34em;
+      color:rgba(255,255,255,.42);
       text-transform:uppercase;
     }
-    .lineage{
-      margin-top:10px;
-      font-size:11px;
-      color:rgba(255,255,255,.26);
+    .tag{
       font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.14em;
+      color:rgba(255,255,255,.28);
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+    .lineage{
+      margin:0 2px 10px;
+      font-family:var(--mono);
+      font-size:11px;
       letter-spacing:.06em;
+      color:rgba(255,255,255,.24);
     }
     .lineage a{
       color:rgba(255,255,255,.44);
       text-decoration:none;
       border-bottom:1px solid rgba(255,255,255,.10);
     }
-    .lineage a:hover{color:rgba(255,255,255,.70); border-bottom-color:rgba(255,255,255,.18);}
+    .lineage a:hover{color:rgba(255,255,255,.72); border-bottom-color:rgba(255,255,255,.18);}
 
     pre{
-      margin:14px 0 0;
+      margin:0 2px;
       white-space:pre-wrap;
-      font-size:14.5px;
-      line-height:1.85;
-      color:rgba(255,255,255,.78);
+      font-size:15px;
+      line-height:1.9;
+      color:rgba(255,255,255,.80);
+      font-family:var(--serif);
+      letter-spacing:.01em;
     }
 
+    /* actions: make them command-tags, not CTA buttons */
     .actions{
-      margin-top:16px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
+      margin-top:14px;
+      display:flex; flex-wrap:wrap;
+      gap:8px;
       align-items:center;
+      padding:0 2px;
     }
-    .btn{
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.03);
-      color:rgba(255,255,255,.74);
-      border-radius:18px;
-      padding:10px 14px;
+    .cmd{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.025);
+      color:rgba(255,255,255,.70);
+      border-radius:999px;
+      padding:8px 12px;
       font-size:12px;
-      letter-spacing:.10em;
+      letter-spacing:.14em;
+      font-family:var(--mono);
       text-transform:uppercase;
       cursor:pointer;
+      transition:all .15s ease;
     }
-    .btn:hover{border-color:var(--stroke2); background:rgba(255,255,255,.06); color:rgba(255,255,255,.86);}
+    .cmd:hover{border-color:var(--stroke2); background:rgba(255,255,255,.05); color:rgba(255,255,255,.86);}
     .hint{
       margin-left:auto;
       display:flex; align-items:center; gap:8px;
-      font-size:11px;
-      color:rgba(255,255,255,.26);
       font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.08em;
+      color:rgba(255,255,255,.22);
+      white-space:nowrap;
     }
-    .dot{width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.22); box-shadow:0 0 18px rgba(255,255,255,.12);}
+    .dot{width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.20); box-shadow:0 0 18px rgba(255,255,255,.12);}
 
     .foot{
       margin-top:14px;
       text-align:center;
-      font-size:11px;
-      color:rgba(255,255,255,.20);
-      letter-spacing:.06em;
       font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.08em;
+      color:rgba(255,255,255,.18);
     }
 
     /* Modal */
@@ -219,9 +277,9 @@
       padding:6px 10px;
       font-size:12px;
       cursor:pointer;
+      font-family:var(--mono);
     }
     .close:hover{border-color:var(--stroke2); background:rgba(255,255,255,.05); color:rgba(255,255,255,.76);}
-
     .mbody{margin-top:12px;}
     textarea{
       width:100%;
@@ -235,12 +293,24 @@
       line-height:1.75;
       outline:none;
       resize:none;
+      font-family:var(--serif);
     }
     textarea::placeholder{color:rgba(255,255,255,.22)}
     .row{margin-top:12px; display:flex; align-items:center; justify-content:space-between; gap:10px;}
     .small{font-size:11px; color:rgba(255,255,255,.28); font-family:var(--mono); letter-spacing:.06em;}
-    .primary{border-color:rgba(255,255,255,.18); background:rgba(255,255,255,.10); color:rgba(255,255,255,.86);}
-    .primary:hover{background:rgba(255,255,255,.13);}
+    .primary{
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.10);
+      color:rgba(255,255,255,.86);
+      border-radius:999px;
+      padding:9px 12px;
+      font-size:12px;
+      letter-spacing:.12em;
+      font-family:var(--mono);
+      text-transform:uppercase;
+      cursor:pointer;
+    }
+    .primary:hover{background:rgba(255,255,255,.13); border-color:rgba(255,255,255,.20);}
 
     @media (max-width:768px){
       html,body{overflow-y:auto; overflow-x:hidden; height:auto; min-height:100%;}
@@ -248,6 +318,7 @@
       .frame{width:100%; padding:16px;}
       canvas{position:fixed;}
       .hint{width:100%; justify-content:flex-start; margin-left:0; margin-top:8px;}
+      pre{font-size:14.5px}
     }
   </style>
 </head>
@@ -262,36 +333,43 @@
           <img src="logo.svg" alt="No-Mind">
           <div>NO-MIND</div>
         </div>
-        <button class="enter" type="button">ENTER</button>
+
+        <div class="topRight">
+          <button class="ghost" id="langBtn" type="button">EN</button>
+          <button class="ghost" type="button" id="enterBtn">ENTER</button>
+        </div>
       </div>
 
-      <div class="panel">
-        <div class="promptRow">
-          <div class="prompt">进入姿态</div>
-          <button class="another" id="another" type="button">another</button>
-        </div>
-
-        <div class="chips" id="chips"></div>
-
-        <div class="work" id="work">
-          <div class="meta">
-            <div id="wid">#000000</div>
-            <div id="wtag">TXT · 未命名</div>
+      <div class="veil">
+        <div class="veilInner">
+          <div class="headRow">
+            <div class="headLeft">
+              <div class="headTitle" id="t_field">FIELD</div>
+              <div class="headHint" id="t_entryState">进入姿态</div>
+            </div>
+            <div class="headMeta" id="headMeta">—</div>
           </div>
 
-          <div class="lineage" id="lineage">—</div>
+          <div class="chips" id="chips"></div>
 
-          <pre id="wtext">—</pre>
+          <div class="work" id="work">
+            <div class="workTop">
+              <div class="id" id="wid">#000000</div>
+              <div class="tag" id="wtag">TXT · 未命名</div>
+            </div>
+            <div class="lineage" id="lineage">—</div>
+            <pre id="wtext">—</pre>
 
-          <div class="actions">
-            <button class="btn" data-action="release" type="button">Release</button>
-            <button class="btn" data-action="relay" type="button">Relay</button>
-            <button class="btn" data-action="resonate" type="button">Resonate</button>
-            <div class="hint"><span class="dot"></span><span>trace works · not people</span></div>
+            <div class="actions">
+              <button class="cmd" data-action="release" type="button" id="t_release">RELEASE</button>
+              <button class="cmd" data-action="relay" type="button" id="t_relay">RELAY</button>
+              <button class="cmd" data-action="resonate" type="button" id="t_resonate">RESONATE</button>
+              <div class="hint"><span class="dot"></span><span id="t_hint">trace works · not people</span></div>
+            </div>
           </div>
-        </div>
 
-        <div class="foot">no lists · no profiles · only fragments</div>
+          <div class="foot" id="t_foot">no lists · no profiles · only fragments</div>
+        </div>
       </div>
     </div>
   </div>
@@ -310,20 +388,137 @@
   </div>
 
   <script>
-    // ---------------------------
+    // ===========================
+    // Language strategy (AUTO + override)
+    // ===========================
+    // 设计阶段：中文优先（true）
+    // 上线阶段：英文优先（false）
+    const DESIGN_CHINESE_FIRST = true;  // <-- 未来上线只改这里为 false
+
+    // localStorage key
+    const LANG_KEY = "nomind_lang";
+
+    const I18N = {
+      zh: {
+        field: "场",
+        entryState: "进入姿态",
+        release: "发布",
+        relay: "中继",
+        resonate: "共振",
+        hint: "只追溯作品 · 不追溯身份",
+        foot: "无列表 · 无档案 · 只有片段",
+        modal: {
+          releaseTitle: "发布",
+          releaseSub: "提交后不可编辑。",
+          releasePlaceholder: "写下片段…",
+          releaseMeta: "匿名 · 冻结 · 可追溯（作品）",
+          releaseOk: "让它存在",
+
+          relayTitle: "中继",
+          relaySub: "一次承担（未来接入燃料）。",
+          relayMeta: "无档案 · 无点赞",
+          relayOk: "中继",
+
+          resonateTitle: "共振",
+          resonateSub: "基于此片段生成新片段（建立谱系）。",
+          resonatePlaceholder: "写下你的二创片段…",
+          resonateMeta: "只建立谱系",
+          resonateOk: "发布"
+        }
+      },
+      en: {
+        field: "FIELD",
+        entryState: "Entry state",
+        release: "Release",
+        relay: "Relay",
+        resonate: "Resonate",
+        hint: "trace works · not people",
+        foot: "no lists · no profiles · only fragments",
+        modal: {
+          releaseTitle: "RELEASE",
+          releaseSub: "Submitted fragments are not editable.",
+          releasePlaceholder: "Write a fragment…",
+          releaseMeta: "anonymous · frozen · traceable (work)",
+          releaseOk: "Let it exist",
+
+          relayTitle: "RELAY",
+          relaySub: "A carry (fuel later).",
+          relayMeta: "no profiles · no likes",
+          relayOk: "Relay",
+
+          resonateTitle: "RESONATE",
+          resonateSub: "Create a new fragment based on this (lineage forms).",
+          resonatePlaceholder: "Write your resonance…",
+          resonateMeta: "lineage only",
+          resonateOk: "Publish"
+        }
+      }
+    };
+
+    function detectLang(){
+      const saved = localStorage.getItem(LANG_KEY);
+      if(saved === "zh" || saved === "en") return saved;
+
+      const nav = (navigator.language || "").toLowerCase();
+      const isZh = nav.startsWith("zh");
+
+      // 设计阶段：中文优先
+      // 1) 如果是中文浏览器 => zh
+      // 2) 如果不是中文浏览器 => 设计阶段默认 zh / 上线阶段默认 en
+      if(isZh) return "zh";
+      return DESIGN_CHINESE_FIRST ? "zh" : "en";
+    }
+
+    let currentLang = detectLang();
+
+    const langBtn = document.getElementById("langBtn");
+    function applyLang(){
+      const t = I18N[currentLang];
+
+      document.getElementById("t_field").textContent = t.field;
+      document.getElementById("t_entryState").textContent = t.entryState;
+
+      // action labels (keep command vibe; we set button text only, CSS keeps command style)
+      document.getElementById("t_release").textContent = t.release.toUpperCase();
+      document.getElementById("t_relay").textContent = t.relay.toUpperCase();
+      document.getElementById("t_resonate").textContent = t.resonate.toUpperCase();
+
+      document.getElementById("t_hint").textContent = t.hint;
+      document.getElementById("t_foot").textContent = t.foot;
+
+      // lang button shows the OTHER language
+      langBtn.textContent = (currentLang === "zh") ? "EN" : "中文";
+      document.documentElement.lang = currentLang === "zh" ? "zh" : "en";
+    }
+
+    langBtn.onclick = () => {
+      currentLang = (currentLang === "zh") ? "en" : "zh";
+      localStorage.setItem(LANG_KEY, currentLang);
+      applyLang();
+      // tiny feedback without “performance”
+      const veil = document.querySelector(".veil");
+      veil.style.opacity = "0.86";
+      setTimeout(()=> veil.style.opacity = "1", 120);
+    };
+
+    applyLang();
+
+    // ===========================
     // Minimal content pool (demo)
-    // ---------------------------
-    const STATES = ["静止","漂浮","失眠","回声","低频","未命名"];
+    // ===========================
+    const STATES_ZH = ["静止","漂浮","失眠","回声","低频","未命名"];
+    const STATES_EN = ["Still","Float","Insomnia","Echo","Low","Unnamed"];
+
     const WORKS = [
-      { id:128, type:"txt", mood:"回声", parentId:null, text:"我把一段话放下。\\n不为解释。\\n只为留下痕迹。" },
-      { id:45,  type:"txt", mood:"低频", parentId:null, text:"你不需要被理解。\\n你只需要存在。" },
-      { id:203, type:"txt", mood:"静止", parentId:45,   text:"今天的光像灰尘。\\n我不去命名它。" },
-      { id:77,  type:"txt", mood:"漂浮", parentId:null, text:"我在这里。\\n我不在这里。" },
-      { id:9,   type:"txt", mood:"失眠", parentId:null, text:"夜里没有答案。\\n只有呼吸的重复。" },
-      { id:311, type:"txt", mood:"未命名", parentId:null, text:"—" }
+      { id:128, type:"txt", mood_zh:"回声", mood_en:"Echo", parentId:null, text_zh:"我把一段话放下。\\n不为解释。\\n只为留下痕迹。", text_en:"I set a fragment down.\\nNot to explain.\\nOnly to leave a trace." },
+      { id:45,  type:"txt", mood_zh:"低频", mood_en:"Low", parentId:null, text_zh:"你不需要被理解。\\n你只需要存在。", text_en:"You don't need to be understood.\\nYou only need to exist." },
+      { id:203, type:"txt", mood_zh:"静止", mood_en:"Still", parentId:45, text_zh:"今天的光像灰尘。\\n我不去命名它。", text_en:"Today the light feels like dust.\\nI won't name it." },
+      { id:77,  type:"txt", mood_zh:"漂浮", mood_en:"Float", parentId:null, text_zh:"我在这里。\\n我不在这里。", text_en:"I'm here.\\nI'm not here." },
+      { id:9,   type:"txt", mood_zh:"失眠", mood_en:"Insomnia", parentId:null, text_zh:"夜里没有答案。\\n只有呼吸的重复。", text_en:"Night has no answer.\\nOnly repeated breathing." },
+      { id:311, type:"txt", mood_zh:"未命名", mood_en:"Unnamed", parentId:null, text_zh:"—", text_en:"—" }
     ];
 
-    let currentMood = "未命名";
+    let currentMoodIndex = 5; // default "未命名/Unnamed"
     let currentWork = null;
 
     const chipsEl = document.getElementById("chips");
@@ -332,17 +527,23 @@
     const lineageEl = document.getElementById("lineage");
     const wtextEl = document.getElementById("wtext");
     const workEl = document.getElementById("work");
+    const headMetaEl = document.getElementById("headMeta");
 
     function pad(n){ return String(n).padStart(6,"0"); }
 
+    function getStates(){
+      return (currentLang === "zh") ? STATES_ZH : STATES_EN;
+    }
+
     function renderChips(){
+      const states = getStates();
       chipsEl.innerHTML = "";
-      STATES.forEach(s=>{
+      states.forEach((label, idx)=>{
         const b = document.createElement("div");
-        b.className = "chip" + (s===currentMood ? " active": "");
-        b.textContent = s;
+        b.className = "chip" + (idx===currentMoodIndex ? " active": "");
+        b.textContent = label;
         b.onclick = ()=>{
-          currentMood = s;
+          currentMoodIndex = idx;
           renderChips();
           pickAndRender();
         };
@@ -350,10 +551,12 @@
       });
     }
 
-    function weightedPick(list, mood){
+    function weightedPick(list, moodKey){
       const pool = [];
       list.forEach(w=>{
-        const wt = (w.mood===mood) ? 3 : 1;
+        const m = w[moodKey];
+        const target = getStates()[currentMoodIndex];
+        const wt = (m === target) ? 3 : 1;
         for(let i=0;i<wt;i++) pool.push(w);
       });
       return pool[Math.floor(Math.random()*pool.length)];
@@ -361,33 +564,66 @@
 
     function renderWork(w){
       currentWork = w;
+
+      const mood = (currentLang === "zh") ? w.mood_zh : w.mood_en;
+      const text = (currentLang === "zh") ? w.text_zh : w.text_en;
+
       widEl.textContent = "#" + pad(w.id);
-      wtagEl.textContent = (w.type.toUpperCase()) + " · " + w.mood;
+      wtagEl.textContent = "TXT · " + mood;
+
+      headMetaEl.textContent = "#" + pad(w.id) + " · " + mood;
 
       if(w.parentId){
-        lineageEl.innerHTML = 'resonated from <a href="#" id="plink">#'+pad(w.parentId)+'</a>';
+        lineageEl.innerHTML = (currentLang==="zh")
+          ? ('共振自 <a href="#" id="plink">#'+pad(w.parentId)+'</a>')
+          : ('resonated from <a href="#" id="plink">#'+pad(w.parentId)+'</a>');
         const plink = document.getElementById("plink");
         plink.onclick = (e)=>{
           e.preventDefault();
-          const parent = WORKS.find(x=>x.id===w.parentId) || weightedPick(WORKS, currentMood);
+          const parent = WORKS.find(x=>x.id===w.parentId) || weightedPick(WORKS, currentLang==="zh" ? "mood_zh" : "mood_en");
           renderWork(parent);
         };
       }else{
         lineageEl.textContent = "—";
       }
-      wtextEl.textContent = w.text || "—";
 
+      wtextEl.textContent = text || "—";
+
+      // tiny fade
       workEl.style.opacity = "0.78";
       setTimeout(()=>{ workEl.style.opacity = "1"; }, 120);
     }
 
     function pickAndRender(){
-      renderWork(weightedPick(WORKS, currentMood));
+      const moodKey = (currentLang==="zh") ? "mood_zh" : "mood_en";
+      renderWork(weightedPick(WORKS, moodKey));
     }
 
-    document.getElementById("another").onclick = pickAndRender;
+    document.getElementById("enterBtn").onclick = () => {
+      // reserved: wallet connect / enter flow later
+      const veil = document.querySelector(".veil");
+      veil.style.opacity = "0.86";
+      setTimeout(()=> veil.style.opacity = "1", 120);
+    };
 
-    // Modal (restrained)
+    // Re-render chips and work when language changes
+    const _applyLang = applyLang;
+    applyLang = function(){
+      _applyLang();
+      renderChips();
+      if(currentWork) renderWork(currentWork);
+      else pickAndRender();
+    };
+    // apply once more to ensure chips match language
+    applyLang();
+
+    document.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape") closeModal();
+    });
+
+    // ===========================
+    // Modal (restrained, bilingual)
+    // ===========================
     const mask = document.getElementById("mask");
     const closeBtn = document.getElementById("close");
     const mtitle = document.getElementById("mtitle");
@@ -398,42 +634,44 @@
       mask.style.display = "flex";
       mbody.innerHTML = "";
 
+      const t = I18N[currentLang].modal;
+
       if(kind==="release"){
-        mtitle.textContent = "RELEASE";
-        msub.textContent = "发布片段。提交后不可编辑。";
+        mtitle.textContent = t.releaseTitle;
+        msub.textContent = t.releaseSub;
         mbody.innerHTML = `
-          <textarea placeholder="写下片段…"></textarea>
+          <textarea placeholder="${escapeHtml(t.releasePlaceholder)}"></textarea>
           <div class="row">
-            <div class="small">匿名 · 冻结 · 可追溯（作品）</div>
-            <button class="btn primary" id="do" type="button">Let it exist</button>
+            <div class="small">${escapeHtml(t.releaseMeta)}</div>
+            <button class="primary" id="do" type="button">${escapeHtml(t.releaseOk)}</button>
           </div>
         `;
         document.getElementById("do").onclick = ()=> closeModal();
       }
 
       if(kind==="relay"){
-        mtitle.textContent = "RELAY";
-        msub.textContent = "一次承担（未来接入燃料）。";
+        mtitle.textContent = t.relayTitle;
+        msub.textContent = t.relaySub;
         mbody.innerHTML = `
-          <div class="small" style="line-height:1.8; color:rgba(255,255,255,.55); padding:6px 2px 10px;">
+          <div class="small" style="line-height:1.8; color:rgba(255,255,255,.50); padding:6px 2px 10px;">
             —
           </div>
           <div class="row">
-            <div class="small">no profiles · no likes</div>
-            <button class="btn primary" id="do" type="button">Relay</button>
+            <div class="small">${escapeHtml(t.relayMeta)}</div>
+            <button class="primary" id="do" type="button">${escapeHtml(t.relayOk)}</button>
           </div>
         `;
         document.getElementById("do").onclick = ()=> closeModal();
       }
 
       if(kind==="resonate"){
-        mtitle.textContent = "RESONATE";
-        msub.textContent = "基于此片段生成新片段（建立谱系）。";
+        mtitle.textContent = t.resonateTitle;
+        msub.textContent = t.resonateSub;
         mbody.innerHTML = `
-          <textarea placeholder="写下你的二创片段…"></textarea>
+          <textarea placeholder="${escapeHtml(t.resonatePlaceholder)}"></textarea>
           <div class="row">
-            <div class="small">lineage only</div>
-            <button class="btn primary" id="do" type="button">Publish</button>
+            <div class="small">${escapeHtml(t.resonateMeta)}</div>
+            <button class="primary" id="do" type="button">${escapeHtml(t.resonateOk)}</button>
           </div>
         `;
         document.getElementById("do").onclick = ()=> closeModal();
@@ -447,12 +685,16 @@
       btn.addEventListener("click", ()=>openModal(btn.dataset.action));
     });
 
-    renderChips();
-    pickAndRender();
+    function escapeHtml(s){
+      return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+    }
 
-    // ---------------------------
-    // Particle system (from your original, slightly restrained)
-    // ---------------------------
+    // another
+    document.getElementById("another")?.addEventListener?.("click", pickAndRender);
+
+    // ===========================
+    // Particle system (your original)
+    // ===========================
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d', { alpha: false });
 
@@ -477,6 +719,7 @@
 
       canvas.width = width * dpr;
       canvas.height = height * dpr;
+
       ctx.scale(dpr, dpr);
 
       particles = [];
@@ -494,7 +737,7 @@
           size: Math.random() < 0.8 ? Math.random() * 2 + 0.5 : Math.random() * 3 + 1.5,
           depth: depth,
           hue: 180 + Math.random() * 100,
-          baseAlpha: 0.08 + Math.random() * 0.35, /* slightly dimmer */
+          baseAlpha: 0.08 + Math.random() * 0.35,
           angle: Math.random() * Math.PI * 2
         });
       }
@@ -538,7 +781,6 @@
 
     function draw() {
       ctx.globalCompositeOperation = 'source-over';
-      /* dimmer trail to reduce “gamey” feel */
       ctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
       ctx.fillRect(0, 0, width, height);
 
